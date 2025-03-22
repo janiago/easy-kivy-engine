@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="easy_kivy_engine",
+    name="easy-kivy-engine",
     version="0.1.0",
     packages=find_packages(),
     install_requires=[
@@ -12,7 +12,7 @@ setup(
     description="A Kivy-based game engine",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/janiago/easy_kivy_engine",
+    url="https://github.com/janiago/easy-kivy-engine",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
