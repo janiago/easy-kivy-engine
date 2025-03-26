@@ -1,16 +1,19 @@
 from kivy.uix.floatlayout import FloatLayout
 from kivy.graphics import Rectangle, Color
 from kivy.core.window import Window
+from kivy.uix.screenmanager import ScreenManager, Screen
 
 
-class Scene(FloatLayout):
+class Scene(Screen):
 
     # Class properties
 
-    def __init__(self, background_color=None, background_image=None, **kwargs):
-        super().__init__(**kwargs)
-
-        self.bg_rect = None
+    def __init__(self, name, background_color=None, background_image=None, **kwargs):
+        super(Screen, self).__init__(**kwargs)
+        self.name = name
+        self.root_layout = FloatLayout()
+        self.add_widget(self.root_layout)
+        self.root_layout.bg_rect = None
         self.bg_sound = None
         self.actors = []
         self.dead_actors = []
@@ -20,13 +23,13 @@ class Scene(FloatLayout):
         # Draw the background
         with self.canvas.before:
             if background_image:
-                self.bg_rect = Rectangle(source=background_image, size=self.size, pos=self.pos)
+                self.root_layout.bg_rect = Rectangle(source=background_image, size=self.root_layout.size, pos=self.root_layout.pos)
             elif background_color:
                 Color(*background_color)  # Background color (e.g., (1, 0, 0, 1) for red)
-                self.bg_rect = Rectangle(size=self.size, pos=self.pos)
+                self.root_layout.bg_rect = Rectangle(size=self.root_layout.size, pos=self.root_layout.pos)
 
         # Bind size and position changes to redraw background
-        self.bind(size=self._update_background, pos=self._update_background)
+        self.root_layout.bind(size=self._update_background, pos=self._update_background)
 
         self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
         self._keyboard.bind(on_key_down=self._on_key_down)
@@ -47,9 +50,9 @@ class Scene(FloatLayout):
         return True
 
     def _update_background(self, *args):
-        if hasattr(self, 'bg_rect'):
-            self.bg_rect.size = self.size
-            self.bg_rect.pos = self.pos
+        if hasattr(self.root_layout, 'bg_rect'):
+            self.root_layout.bg_rect.size = self.root_layout.size
+            self.root_layout.bg_rect.pos = self.root_layout.pos
 
     def actors_colliding(self):
         for actor in self.actors:
@@ -84,7 +87,7 @@ class Scene(FloatLayout):
 
     def add_actor(self, actor):
         self.actors.append(actor)
-        self.add_widget(actor)
+        self.root_layout.add_widget(actor)
         actor.scene = self
 
     def move_actors(self, pressed_keys):
